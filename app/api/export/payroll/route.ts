@@ -1,11 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const periodId = searchParams.get("periodId")
-    const format = searchParams.get("format") || "csv"
+    const periodId = request.nextUrl.searchParams.get("periodId")
+    const format = request.nextUrl.searchParams.get("format") || "csv"
 
     const supabase = await createClient()
 
