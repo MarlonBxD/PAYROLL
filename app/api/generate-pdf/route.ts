@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { renderToStream } from '@react-pdf/renderer'
 import { PayslipPDF } from '@/components/payslip-pdf'
+import { CertificatePDF } from '@/components/certificate-pdf'
 import React from 'react'
 
 export async function GET(request: NextRequest) {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       .eq('payroll_period_id', periodId)
       .eq('employee_id', employeeId)
 
-    // Prepare data for PayslipPDF component
+    // Prepare data for PDF component
     const pdfData = {
       company: companyData,
       period: payrollData.payroll_periods,
@@ -73,8 +74,17 @@ export async function GET(request: NextRequest) {
       deductions: deductions || []
     }
 
-    // Create PDF document using PayslipPDF component
-    const document = React.createElement(PayslipPDF, { data: pdfData }) as any
+    // Determine document type based on contract type
+    const contractType = payrollData.employees?.contract_type || 'NOMINA'
+    const isOPS = contractType === 'OPS'
+    
+    console.log('Contract type detected:', contractType, 'Using OPS certificate:', isOPS)
+
+    // Create PDF document using appropriate component
+    const document = React.createElement(
+      isOPS ? CertificatePDF : PayslipPDF, 
+      { data: pdfData }
+    ) as any
 
     // Generate PDF using renderToStream
     const stream = await renderToStream(document)
@@ -84,10 +94,13 @@ export async function GET(request: NextRequest) {
       stream.on('data', (chunk) => chunks.push(chunk))
       stream.on('end', () => {
         const buffer = Buffer.concat(chunks)
+        const documentName = isOPS ? 'certificado_pago' : 'desprendible'
+        const fileName = `${documentName}-${payrollData.employees?.full_name?.replace(/\s+/g, '_') || 'empleado'}-periodo_${payrollData.payroll_periods?.period_number}.pdf`
+        
         resolve(new NextResponse(buffer, {
           headers: {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="desprendible-${payrollData.employees?.full_name || 'empleado'}.pdf"`
+            'Content-Disposition': `attachment; filename="${fileName}"`
           }
         }))
       })

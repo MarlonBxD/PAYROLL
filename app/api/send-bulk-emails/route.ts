@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         }
         
         // Generar PDF para cada empleado usando el API interno
-        const docResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-document`, {
+        const docResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-pdf`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

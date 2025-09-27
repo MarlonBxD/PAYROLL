@@ -177,7 +177,7 @@ export const PayslipPDF = ({ data }: PayslipPDFProps) => {
 
   return (
     <Document title={`Desprendible - ${employee?.full_name}`}>
-      <Page size="A4" style={styles.page}>
+      <Page size="LETTER" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logoSection}>

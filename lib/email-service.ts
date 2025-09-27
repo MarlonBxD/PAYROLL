@@ -284,7 +284,7 @@ export async function sendBulkPayslips(
       }
       
       // Generar PDF para cada empleado usando el API
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-document`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

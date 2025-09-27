@@ -1,5 +1,10 @@
 import { useState } from 'react'
 
+/**
+ * Hook para descargar documentos de nómina
+ * Automáticamente genera desprendibles para empleados NÓMINA o certificados para empleados OPS
+ * basándose en el tipo de contrato del empleado
+ */
 interface UsePayslipDownloadResult {
   downloadPayslip: (periodId: string, employeeId: string) => Promise<void>
   isDownloading: boolean
@@ -15,25 +20,55 @@ export function usePayslipDownload(): UsePayslipDownloadResult {
     setError(null)
 
     try {
-      console.log('🔍 Iniciando descarga de desprendible:', { periodId, employeeId })
+      console.log('🔍 Iniciando descarga de documento:', { periodId, employeeId })
 
-      // Use simple HTML version for now (works better than PDF)
-      const url = `/api/download-payslip-simple?periodId=${encodeURIComponent(periodId)}&employeeId=${encodeURIComponent(employeeId)}`
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          periodId,
+          employeeId
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Error al generar el documento')
+      }
+
+      // Get the PDF as blob
+      const blob = await response.blob()
       
-      // Create a temporary link to trigger download
+      // Get filename from response headers
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = 'documento.pdf'
+      if (contentDisposition) {
+        const matches = contentDisposition.match(/filename="(.+)"/)
+        if (matches && matches[1]) {
+          filename = matches[1]
+        }
+      }
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.target = '_blank'
+      link.download = filename
       
       // Append to body, click, and remove
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
 
-      console.log('✅ Descarga iniciada exitosamente')
+      // Clean up the URL object
+      window.URL.revokeObjectURL(url)
+
+      console.log('✅ Descarga completada:', { filename })
 
     } catch (error) {
-      console.error('❌ Error downloading payslip:', error)
+      console.error('❌ Error downloading document:', error)
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido al descargar'
       setError(errorMessage)
       throw error
@@ -61,9 +96,9 @@ export function usePayslipDownloadPost(): UsePayslipDownloadResult {
     setError(null)
 
     try {
-      console.log('🔍 Iniciando descarga de desprendible (POST):', { periodId, employeeId })
+      console.log('🔍 Iniciando descarga de documento (POST):', { periodId, employeeId })
 
-      const response = await fetch('/api/download-payslip', {
+      const response = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,29 +111,27 @@ export function usePayslipDownloadPost(): UsePayslipDownloadResult {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Error al generar el desprendible')
+        throw new Error(errorData.error || 'Error al generar el documento')
       }
 
-      const data = await response.json()
-
-      if (!data.success || !data.pdf || !data.fileName) {
-        throw new Error('Respuesta inválida del servidor')
+      // Get the PDF as blob
+      const blob = await response.blob()
+      
+      // Get filename from response headers
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = 'documento.pdf'
+      if (contentDisposition) {
+        const matches = contentDisposition.match(/filename="(.+)"/)
+        if (matches && matches[1]) {
+          filename = matches[1]
+        }
       }
-
-      // Convert base64 to blob
-      const byteCharacters = atob(data.pdf)
-      const byteNumbers = new Array(byteCharacters.length)
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i)
-      }
-      const byteArray = new Uint8Array(byteNumbers)
-      const blob = new Blob([byteArray], { type: 'application/pdf' })
 
       // Create download link
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = data.fileName
+      link.download = filename
       
       // Append to body, click, and remove
       document.body.appendChild(link)
@@ -108,15 +141,10 @@ export function usePayslipDownloadPost(): UsePayslipDownloadResult {
       // Clean up the URL object
       window.URL.revokeObjectURL(url)
 
-      console.log('✅ Descarga completada:', {
-        fileName: data.fileName,
-        employeeName: data.employeeName,
-        contractType: data.contractType,
-        size: data.size
-      })
+      console.log('✅ Descarga completada:', { filename })
 
     } catch (error) {
-      console.error('❌ Error downloading payslip (POST):', error)
+      console.error('❌ Error downloading document (POST):', error)
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido al descargar'
       setError(errorMessage)
       throw error

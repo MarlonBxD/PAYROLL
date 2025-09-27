@@ -370,7 +370,7 @@ export default function SendPayslipsPage() {
                         size="sm"
                         onClick={() => handleDownloadPayslip(summary.employee_id)}
                         className="flex items-center"
-                        title={`Descargar ${documentType.toLowerCase()}`}
+                        title={`Descargar ${documentType.toLowerCase()} para ${summary.employees?.full_name}`}
                         disabled={isDownloadingPayslip}
                       >
                         <Download className="h-4 w-4 mr-1" />
