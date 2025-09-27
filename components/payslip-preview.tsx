@@ -18,33 +18,27 @@ export function PayslipPreview({ data }: { data: PayslipData }) {
 
   const handleDownloadPDF = async () => {
     try {
-      // Call the API to generate the PDF
-      const response = await fetch('/api/generate-document', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          employeeId: data.employee?.id,
-          periodId: data.period?.id,
-        }),
-      })
+      // Use the new @react-pdf/renderer API
+      const employeeId = data.summary?.employee_id || data.employee?.id
+      const periodId = data.period?.id
+      
+      console.log('Downloading PDF for:', { employeeId, periodId, summary: data.summary, employee: data.employee })
+      
+      if (!employeeId || !periodId) {
+        throw new Error('Faltan datos del empleado o período')
+      }
+      
+      const response = await fetch(`/api/generate-pdf?employeeId=${employeeId}&periodId=${periodId}`)
 
       if (!response.ok) {
-        throw new Error('Error al generar el documento')
+        throw new Error('Error al generar el PDF')
       }
 
       // Get the PDF blob
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       
-      // Get document type from response headers
-      const documentType = response.headers.get('X-Document-Type') || 'Documento'
-      const contractType = response.headers.get('X-Contract-Type') || 'NOMINA'
-      
-      const fileName = contractType === 'OPS' 
-        ? `certificado_${data.employee?.full_name?.replace(/\s+/g, '_')}_${data.period?.period_number}.pdf`
-        : `desprendible_${data.employee?.full_name?.replace(/\s+/g, '_')}_${data.period?.period_number}.pdf`
+      const fileName = `desprendible_${data.employee?.full_name?.replace(/\s+/g, '_')}_${data.period?.period_number}.pdf`
       
       const a = document.createElement('a')
       a.href = url
@@ -56,13 +50,13 @@ export function PayslipPreview({ data }: { data: PayslipData }) {
       
       toast({
         title: "Éxito",
-        description: `${documentType} descargado correctamente`,
+        description: "PDF descargado correctamente",
       })
     } catch (error) {
       console.error('Error generating PDF:', error)
       toast({
         title: "Error",
-        description: "Error al generar el documento",
+        description: "Error al generar el PDF",
         variant: "destructive",
       })
     }
