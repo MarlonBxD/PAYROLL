@@ -37,11 +37,17 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
+<<<<<<< HEAD
     "@react-pdf/renderer": "^4.3.1",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@types/nodemailer": "^7.0.1",
     "@types/pdfkit": "^0.17.3",
+=======
+    "@supabase/ssr": "latest",
+    "@supabase/supabase-js": "latest",
+    "@types/nodemailer": "^7.0.1",
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
     "@vercel/analytics": "1.3.1",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
@@ -57,7 +63,10 @@
     "next": "14.2.16",
     "next-themes": "^0.4.6",
     "nodemailer": "^7.0.6",
+<<<<<<< HEAD
     "pdfkit": "^0.13.0",
+=======
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
     "puppeteer": "^24.22.2",
     "react": "^18",
     "react-day-picker": "9.8.0",
@@ -65,7 +74,10 @@
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.4",
+<<<<<<< HEAD
     "resend": "^6.1.0",
+=======
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",

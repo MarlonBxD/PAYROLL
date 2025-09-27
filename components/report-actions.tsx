@@ -2,6 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import { Download, FileText } from "lucide-react"
+<<<<<<< HEAD
+=======
+import { generateReportPDF } from "@/lib/pdf-generator"
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
 import { useToast } from "@/hooks/use-toast"
 
 interface ReportActionsProps {
@@ -52,6 +56,7 @@ export function ReportActions({ periodsWithTotals, ytdTotals }: ReportActionsPro
         }
       }
 
+<<<<<<< HEAD
       // For now, show a message that this feature is coming soon
       // In the future, we'll create an API endpoint for report generation
       toast({
@@ -68,6 +73,21 @@ export function ReportActions({ periodsWithTotals, ytdTotals }: ReportActionsPro
       // })
       // const blob = await response.blob()
       // ... handle download
+=======
+      const pdfData = generateReportPDF(reportData)
+      
+      // Create blob and download
+      const blob = new Blob([new Uint8Array(pdfData)], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `reporte_nomina_${new Date().getFullYear()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
       
       toast({
         title: "Éxito",

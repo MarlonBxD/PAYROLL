@@ -123,6 +123,7 @@
     @apply bg-background text-foreground;
   }
 }
+<<<<<<< HEAD
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
@@ -247,3 +248,5 @@
     @apply bg-background text-foreground;
   }
 }
+=======
+>>>>>>> cac71339ca1e82e3e9dd36ed25bfc7745e89f9b9
