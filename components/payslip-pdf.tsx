@@ -242,7 +242,7 @@ export const PayslipPDF = ({ data }: PayslipPDFProps) => {
               <Text style={styles.value}>{new Date(employee?.hire_date).toLocaleDateString()}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.label}>HONORARIOS</Text>
+              <Text style={styles.label}>VALOR</Text>
               <Text style={styles.colon}>:</Text>
               <Text style={styles.value}>{employee?.base_salary?.toLocaleString()}</Text>
             </View>
@@ -263,7 +263,7 @@ export const PayslipPDF = ({ data }: PayslipPDFProps) => {
               <Text style={styles.value}>{period?.period_number}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.label}>HONORARIOS</Text>
+              <Text style={styles.label}>TIPO</Text>
               <Text style={styles.colon}>:</Text>
               <Text style={styles.value}>{employee?.salary_type}</Text>
             </View>
